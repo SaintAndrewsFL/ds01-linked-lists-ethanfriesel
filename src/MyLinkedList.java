@@ -1,5 +1,3 @@
-import org.w3c.dom.Node;
-
 public class MyLinkedList<T> {
     private Node head;
 
@@ -147,6 +145,77 @@ public class MyLinkedList<T> {
         head = head.getNext();
         return fill.getData();
     }
+    public T pollLast(){
+        if (head == null)
+            return null;
+        else if (head.getNext() == null)
+            return null;
+        Node current = head;
+        while (current.getNext().getNext() != null) {
+            current = current.getNext();
+        }
+        Node fill = current.getNext();
+        current.setNext(null);
+        return fill.getData();
+    }
+    public T remove(int index) {
+        if (head == null || index < 0)
+            return null;
+        Node current = head;
+        if (index == 0) {
+            if (head.getNext() != null) {
+                head = head.getNext();
+                return current.getData();
+            }
+            head = null;
+            return current.getData();
+        }
+        for (int i = 1; i < index; i++) {
+            if (current.getNext() == null) {
+                return null;
+            }
+        }
+        Node fill = current.getNext();
+        if (current.getNext().getNext() == null) {
+            current.setNext(null);
+            return fill.getData();
+        }
+        current.setNext(fill.getNext());
+        return fill.getData();
+
+    }
+    public T remove(T obj) {
+        if (head == null)
+            return null;
+        Node current = head;
+        if (head.getData().equals(obj)) {
+            if (head.getNext() != null) {
+                head = head.getNext();
+                return current.getData();
+            }
+            head = null;
+            return current.getData();
+        }
+        if (current.getNext() == null) {
+            return null;
+        }
+        while (!current.getNext().getData().equals(obj)){
+            if (current.getNext() == null) {
+                return null;
+            }
+            current = current.getNext();
+        }
+        Node fill = current.getNext();
+        if (current.getNext().getNext() == null) {
+            current.setNext(null);
+            return fill.getData();
+        }
+        current.setNext(fill.getNext());
+        return fill.getData();
+    }
+
+
+
 
     public class Node{
         private Node next;
