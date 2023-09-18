@@ -8,7 +8,14 @@ public class Main {
         list.add("1");
         list.add(1, "2");
         System.out.println(list.get(0));
-        System.out.println(list.remove("0"));
-        System.out.println(list.get(0));
+        System.out.println(list.set(0, "3"));
+        list.addLast("-1");
+        System.out.println(list.indexOf("3"));
+//        System.out.println(list.getFirst());
+//        System.out.println(list.get(1));
+//        System.out.println(list.get(1));
+//        System.out.println(list.get(2));
+//        System.out.println(list.getLast());
+//        System.out.println(list.size());
     }
 }

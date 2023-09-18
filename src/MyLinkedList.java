@@ -213,6 +213,60 @@ public class MyLinkedList<T> {
         current.setNext(fill.getNext());
         return fill.getData();
     }
+    public T set(int index, T obj) {
+        if (index < 0){
+            return null;
+        }
+        if (index == 0) {
+            if (head != null) {
+                Node r = head;
+                if (head.getNext() != null) {
+                    Node fill = head.getNext();
+                    head = new Node(obj);
+                    head.setNext(fill);
+                }
+                else {
+                    head = new Node(obj);
+                }
+                return r.getData();
+            }
+            else {
+                head = new Node(obj);
+                return null;
+            }
+        }
+        Node current = head;
+        for (int i = 1; i < index - 1; i++) {
+            if (current.getNext() == null) {
+                return null;
+            }
+            current = current.getNext();
+        }
+        if (current.getNext().getNext() != null) {
+            Node fill = current.getNext().getNext();
+            Node r = current.getNext();
+            current.setNext(new Node(obj));
+            current.getNext().setNext(fill);
+            return r.getData();
+        }
+        else {
+            Node r = current.getNext();
+            current.setNext(new Node(obj));
+            return r.getData();
+        }
+    }
+    public int size(){
+        if (head == null){
+            return 0;
+        }
+        int count = 1;
+        Node current = head;
+        while (current.getNext() != null) {
+            count++;
+            current = current.getNext();
+        }
+        return count;
+    }
 
 
 
