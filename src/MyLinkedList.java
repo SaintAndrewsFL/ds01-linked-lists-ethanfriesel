@@ -4,7 +4,7 @@ public class MyLinkedList<T> {
     public MyLinkedList() {
     }
 
-    public boolean add(T item){
+    public void add(T item){
         if (head == null) {
             head = new Node(item);
         }
@@ -14,7 +14,6 @@ public class MyLinkedList<T> {
                 current = current.next;
             current.setNext(new Node(item));
         }
-        return true;
     }
     public boolean add(int index, T item){
         if (index < 0)
@@ -226,7 +225,7 @@ public class MyLinkedList<T> {
                     head.setNext(fill);
                 }
                 else {
-                    head = new Node(obj);
+                    head.setData(obj);
                 }
                 return r.getData();
             }
@@ -242,18 +241,9 @@ public class MyLinkedList<T> {
             }
             current = current.getNext();
         }
-        if (current.getNext().getNext() != null) {
-            Node fill = current.getNext().getNext();
-            Node r = current.getNext();
-            current.setNext(new Node(obj));
-            current.getNext().setNext(fill);
-            return r.getData();
-        }
-        else {
-            Node r = current.getNext();
-            current.setNext(new Node(obj));
-            return r.getData();
-        }
+        Node r = current.getNext();
+        current.setData(obj);
+        return r.getData();
     }
     public int size(){
         if (head == null){
