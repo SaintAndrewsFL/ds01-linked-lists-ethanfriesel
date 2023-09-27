@@ -1,7 +1,11 @@
 public class MyLinkedList<T> {
     private Node head;
+    private boolean circular;
+    private boolean doubly;
 
-    public MyLinkedList() {
+    public MyLinkedList(boolean circular, boolean doubly) {
+        this.circular = circular;
+        this.doubly = doubly;
     }
 
     public void add(T item){
@@ -13,6 +17,12 @@ public class MyLinkedList<T> {
             while (current.getNext() != null)
                 current = current.next;
             current.setNext(new Node(item));
+            if (circular)
+                current.getNext().setNext(head);
+            if (doubly)
+                current.getNext().setPrevious(current);
+            if (doubly && circular)
+                head.setPrevious(current.getNext());
         }
     }
     public boolean add(int index, T item){
@@ -24,9 +34,11 @@ public class MyLinkedList<T> {
                 head = new Node(item);
             }
             else {
-                fill = head.getNext();
+                fill = head;
                 head = new Node(item);
                 head.setNext(fill);
+                if (doubly)
+                    head.setPrevious(fill.getPrevious());
             }
             return true;
         }
@@ -43,7 +55,7 @@ public class MyLinkedList<T> {
         else {
             fill = current.getNext();
             current.setNext(new Node(item));
-            current.getNext().setNext(new Node(fill.getData()));
+            current.getNext().setNext(fill);
         }
         return true;
     }
@@ -51,9 +63,13 @@ public class MyLinkedList<T> {
         if (head == null)
             head = new Node(item);
         else {
-            Node fill = head;
-            head = new Node(item);
-            head .setNext(fill);
+            T fill = head.getData();
+            head.setData(item);
+            Node next = head.getNext();
+            head.setNext(new Node(fill));
+            head.getNext().setNext(next);
+            if (doubly)
+                head.getNext().setPrevious(head);
         }
     }
     public void addLast(T item) {
@@ -61,9 +77,13 @@ public class MyLinkedList<T> {
             head = new Node(item);
         else {
             Node current = head;
-            while (current.getNext() != null)
+            while (current.getNext() != head)
                 current = current.getNext();
             current.setNext(new Node(item));
+            if (circular)
+                current.getNext().setNext(head);
+            if (doubly)
+                current.getNext().setPrevious(current);
         }
     }
     public void clear() {
@@ -262,10 +282,19 @@ public class MyLinkedList<T> {
 
 
     public class Node{
+        private Node previous;
         private Node next;
         private T data;
         public Node(T data){
             this.data = data;
+        }
+
+        public Node getPrevious() {
+            return previous;
+        }
+
+        public void setPrevious(Node previous) {
+            this.previous = previous;
         }
 
         public Node getNext() {
