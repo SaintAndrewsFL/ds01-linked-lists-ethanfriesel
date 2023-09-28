@@ -90,9 +90,7 @@ public class MyLinkedList<T> {
         head = null;
     }
     public boolean contains(T item) {
-        if (head == null) {
-        }
-        else {
+        if (head != null) {
             Node current = head;
             while (current != null) {
                 if (current.getData().equals(item))
