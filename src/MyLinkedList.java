@@ -3,6 +3,8 @@ public class MyLinkedList<T> {
     private boolean circular;
     private boolean doubly;
 
+    public MyLinkedList() {
+    }
     public MyLinkedList(boolean circular, boolean doubly) {
         this.circular = circular;
         this.doubly = doubly;
@@ -14,7 +16,7 @@ public class MyLinkedList<T> {
         }
         else {
             Node current = head;
-            while (current.getNext() != null)
+            while (current.getNext() != null && current.getNext() != head)
                 current = current.next;
             current.setNext(new Node(item));
             if (circular)
@@ -28,17 +30,21 @@ public class MyLinkedList<T> {
     public boolean add(int index, T item){
         if (index < 0)
             return false;
-        Node fill;
+        T fill;
         if (index == 0) {
             if (head == null) {
                 head = new Node(item);
             }
             else {
-                fill = head;
-                head = new Node(item);
-                head.setNext(fill);
-                if (doubly)
-                    head.setPrevious(fill.getPrevious());
+                fill = head.getData();
+                Node next = head.getNext();
+                head.setNext(new Node(fill));
+                head.getNext().setNext(next);
+                head.setData(item);
+                if (doubly) {
+                    head.getNext().setPrevious(head);
+                    head.getNext().getNext().setPrevious(head.getNext());
+                }
             }
             return true;
         }
@@ -50,12 +56,23 @@ public class MyLinkedList<T> {
                 return false;
             current = current.getNext();
         }
-        if (current.getNext() == null)
+        if (current.getNext() == null) {
             current.setNext(new Node(item));
+            if (circular)
+                current.getNext().setNext(head);
+            if (doubly) {
+                current.getNext().setPrevious(current);
+                head.setPrevious(current.getNext());
+            }
+        }
         else {
-            fill = current.getNext();
+            Node next = current.getNext();
             current.setNext(new Node(item));
-            current.getNext().setNext(fill);
+            current.getNext().setNext(next);
+            if (doubly) {
+                current.getNext().setPrevious(current);
+                current.getNext().getNext().setPrevious(current.getNext());
+            }
         }
         return true;
     }
@@ -106,7 +123,7 @@ public class MyLinkedList<T> {
         }
         Node current = head;
         for (int i = 0; i < index; i++) {
-            if (current.getNext() == null) {
+            if (current.getNext() == null || current.getNext() == head) {
                 return null;
             }
             current = current.getNext();
@@ -123,7 +140,7 @@ public class MyLinkedList<T> {
         if (head == null)
             return null;
         Node current = head;
-        while (current.getNext() != null)
+        while (current.getNext() != null || current.getNext() != head)
             current = current.getNext();
         return current.getData();
     }
@@ -135,6 +152,8 @@ public class MyLinkedList<T> {
         while (current != null){
             if (current.getData() == item)
                 return i;
+            if (current.getNext() == head)
+                return -1;
             current = current.getNext();
             i++;
         }
@@ -147,9 +166,11 @@ public class MyLinkedList<T> {
         int i = 0;
         int high = -1;
         while (current != null){
-            if (current.getData() == item)
+            if (current.getData().equals(item))
                 high = i;
             current = current.getNext();
+            if (current == head)
+                return high;
             i++;
         }
         return high;
@@ -158,9 +179,11 @@ public class MyLinkedList<T> {
     public T poll() {
         if (head == null || head.getNext() == null)
             return null;
-        Node fill = head;
-        head = head.getNext();
-        return fill.getData();
+        T data = head.getData();
+        T fill = head.getNext().getData();
+        head.setNext(head.getNext().getNext());
+        head.setData(fill);
+        return data;
     }
     public T pollLast(){
         if (head == null)
@@ -172,7 +195,10 @@ public class MyLinkedList<T> {
             current = current.getNext();
         }
         Node fill = current.getNext();
-        current.setNext(null);
+        if (circular)
+            current.setNext(head);
+        else
+            current.setNext(null);
         return fill.getData();
     }
     public T remove(int index) {
@@ -181,7 +207,11 @@ public class MyLinkedList<T> {
         Node current = head;
         if (index == 0) {
             if (head.getNext() != null) {
-                head = head.getNext();
+                T fill = head.getNext().getData();
+                head.setNext(head.getNext().getNext());
+                head.setData(fill);
+                if (doubly)
+                    head.getNext().setPrevious(head);
                 return current.getData();
             }
             head = null;
@@ -191,6 +221,7 @@ public class MyLinkedList<T> {
             if (current.getNext() == null) {
                 return null;
             }
+            current = current.getNext();
         }
         Node fill = current.getNext();
         if (current.getNext().getNext() == null) {
@@ -198,6 +229,8 @@ public class MyLinkedList<T> {
             return fill.getData();
         }
         current.setNext(fill.getNext());
+        if (doubly)
+            current.getNext().setPrevious(current);
         return fill.getData();
 
     }
@@ -208,6 +241,8 @@ public class MyLinkedList<T> {
         if (head.getData().equals(obj)) {
             if (head.getNext() != null) {
                 head = head.getNext();
+                if (doubly)
+                    head.getNext().setPrevious(head);
                 return current.getData();
             }
             head = null;
@@ -228,6 +263,8 @@ public class MyLinkedList<T> {
             return fill.getData();
         }
         current.setNext(fill.getNext());
+        if (doubly)
+            current.getNext().setPrevious(current);
         return fill.getData();
     }
     public T set(int index, T obj) {
@@ -253,15 +290,15 @@ public class MyLinkedList<T> {
             }
         }
         Node current = head;
-        for (int i = 1; i < index - 1; i++) {
+        for (int i = 0; i < index; i++) {
             if (current.getNext() == null) {
                 return null;
             }
             current = current.getNext();
         }
-        Node r = current.getNext();
+        T r = current.getData();
         current.setData(obj);
-        return r.getData();
+        return r;
     }
     public int size(){
         if (head == null){
@@ -269,7 +306,7 @@ public class MyLinkedList<T> {
         }
         int count = 1;
         Node current = head;
-        while (current.getNext() != null) {
+        while (current.getNext() != null || current.getNext() == head) {
             count++;
             current = current.getNext();
         }
