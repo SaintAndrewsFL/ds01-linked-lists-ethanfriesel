@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+
 public class MyLinkedList<T> {
     private Node head;
     private boolean circular;
@@ -271,34 +273,32 @@ public class MyLinkedList<T> {
         if (index < 0){
             return null;
         }
+        if (head == null){
+            head = new Node(obj);
+            return null;
+        }
         if (index == 0) {
-            if (head != null) {
-                Node r = head;
-                if (head.getNext() != null) {
-                    Node fill = head.getNext();
-                    head = new Node(obj);
-                    head.setNext(fill);
-                }
-                else {
-                    head.setData(obj);
-                }
-                return r.getData();
-            }
-            else {
-                head = new Node(obj);
-                return null;
-            }
+            T fill = head.getData();
+            head.setData(obj);
+            return fill;
         }
         Node current = head;
-        for (int i = 0; i < index; i++) {
-            if (current.getNext() == null) {
-                return null;
-            }
-            current = current.getNext();
+        for (int i = 0; i < index - 1; i++) {
+           if (current.getNext() == null || current.getNext() == head)
+               return null;
+           current = current.getNext();
         }
-        T r = current.getData();
-        current.setData(obj);
-        return r;
+        if (current.getNext() == null || current.getNext() == head) {
+            current.setNext(new Node(obj));
+            if (circular)
+                current.getNext().setNext(head);
+            if (doubly)
+                current.getNext().setPrevious(current);
+            return null;
+        }
+        T fill = current.getNext().getData();
+        current.getNext().setData(obj);
+        return fill;
     }
     public int size(){
         if (head == null){
@@ -311,6 +311,24 @@ public class MyLinkedList<T> {
             current = current.getNext();
         }
         return count;
+    }
+    public boolean checkCircular() {
+        if (head == null)
+            return false;
+        Node turtle = head;
+        if (turtle.getNext() == null)
+            return false;
+        Node rabbit = turtle.getNext();
+        while (turtle != rabbit) {
+            turtle = turtle.getNext();
+            rabbit = rabbit.getNext();
+            if (rabbit == null)
+                return false;
+            rabbit = rabbit.getNext();
+            if (turtle == null || rabbit == null)
+                return false;
+        }
+        return true;
     }
 
 
