@@ -3,7 +3,7 @@ import java.util.LinkedList;
 
 public class Main {
     public static void main(String[] args) {
-        MyLinkedList<String> list = new MyLinkedList<>(true, true);
+        MyLinkedList<String> list = new MyLinkedList<>(false, false);
         list.add("0");
         list.add("1");
         list.add("3");
