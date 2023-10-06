@@ -190,10 +190,13 @@ public class MyLinkedList<T> {
     public T pollLast(){
         if (head == null)
             return null;
-        else if (head.getNext() == null)
-            return null;
+        else if (head.getNext() == null) {
+            T fill = head.getData();
+            head = null;
+            return fill;
+        }
         Node current = head;
-        while (current.getNext().getNext() != null) {
+        while (current.getNext().getNext() != null && current.getNext().getNext() != head) {
             current = current.getNext();
         }
         Node fill = current.getNext();
