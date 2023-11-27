@@ -101,8 +101,10 @@ public class MyLinkedList<T> {
             current.setNext(new Node(item));
             if (circular)
                 current.getNext().setNext(head);
-            if (doubly)
+            if (doubly) {
                 current.getNext().setPrevious(current);
+                head.setPrevious(current.getNext());
+            }
         }
     }
     public void clear() {
@@ -111,7 +113,7 @@ public class MyLinkedList<T> {
     public boolean contains(T item) {
         if (head != null) {
             Node current = head;
-            while (current != null) {
+            while (current != null || current.getNext().equals(head)) {
                 if (current.getData().equals(item))
                     return true;
                 current = current.getNext();
@@ -142,7 +144,7 @@ public class MyLinkedList<T> {
         if (head == null)
             return null;
         Node current = head;
-        while (current.getNext() != null || current.getNext() != head)
+        while (current.getNext() != null && current.getNext() != head)
             current = current.getNext();
         return current.getData();
     }
@@ -309,7 +311,7 @@ public class MyLinkedList<T> {
         }
         int count = 1;
         Node current = head;
-        while (current.getNext() != null || current.getNext() == head) {
+        while (current.getNext() != null && current.getNext() != head) {
             count++;
             current = current.getNext();
         }
